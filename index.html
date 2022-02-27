@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="./styles.css">
+	<title>Pixel Image</title>
+</head>
+<body>
+	<header>
+		<h1>Pixel Image</h1>
+	</header>
+	<div class="main">
+		<section class="image-content">
+			<canvas id="canvas" class="upload-image">Upload your image</canvas>
+			<input type="file" id="image-input" accept="image/jpg, image/jpeg, image/png">
+			<button id="upload-button">Upload</button>
+		</section>
+		<section class="menu-content">
+			<div class="controls">
+				<div><strong>Pixel size</strong></div>
+				<input type="range" id="pixel-size" step="1" min="1" max="15" value="1" class="slider">
+				<label for="pixel-size">1</label>
+			</div>
+			<div class="controls">
+				<div><strong>Reduction method</strong></div>
+				<input name="method" type="radio" id="quant-method" value="0" checked>
+				<label for="quant-method">None</label>
+				<input name="method" type="radio" id="quant-method" value="1">
+				<label for="quant-method">Quantization</label>
+				<input name="method" type="radio" id="cluster-method" value="2">
+				<label for="cluster-method">Clusterization</label>
+			</div>
+			<div class="controls">
+				<button id="process-button">Pixelate</button>
+				<button id="reset-button">Reset</button>
+			</div>
+		</section>		
+	</div>
+	<footer>
+		Made with owo by <a href="https://github.com/lArkl">lArkl</a>
+	</footer>
+	<script type="module" src="./main.js"></script>
+</body>
+</html>
