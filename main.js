@@ -158,7 +158,7 @@ function pixelate(data, size) {
 					}
 				}
 			}
-		}		
+		}
 	}
 
 }
@@ -236,3 +236,4 @@ resetBtn.addEventListener('click', () => {
 	resetPixelData(imageData.data);
     ctx.putImageData(imageData, 0, 0);
 });
+
