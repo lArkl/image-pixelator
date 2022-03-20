@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<link rel="stylesheet" type="text/css" href="./styles.css">
-	<title>Pixel Image</title>
-</head>
+	<head>
+		<link rel="stylesheet" type="text/css" href="./styles.css">
+		<title>Pixel Image</title>
+	</head>
 <body>
 	<header>
 		<h1>Pixel Image</h1>
@@ -21,22 +21,20 @@
 				<label for="pixel-size">1</label>
 			</div>
 			<div class="controls">
-				<div><strong>Reduction method</strong></div>
-				<input name="method" type="radio" id="quant-method" value="0" checked>
-				<label for="quant-method">None</label>
-				<input name="method" type="radio" id="quant-method" value="1">
-				<label for="quant-method">Quantization</label>
-				<input name="method" type="radio" id="cluster-method" value="2">
-				<label for="cluster-method">Clusterization</label>
+				<div><strong>Method</strong></div>
+				<select name="method-select" id="method-select"></select>
+			</div>
+			<div class="controls" id="extra-control">
+				<div><strong></strong></div>
 			</div>
 			<div class="controls">
 				<button id="process-button">Pixelate</button>
-				<button id="reset-button">Reset</button>
+				<button id="reset-button">Reset /button>
 			</div>
 		</section>		
 	</div>
 	<footer>
-		Made with owo by <a href="https://github.com/lArkl">lArkl</a>
+		Made with b&#10084 y <a href="https://github.com/lArkl">lArkl</a>
 	</footer>
 	<script type="module" src="./main.js"></script>
 </body>
