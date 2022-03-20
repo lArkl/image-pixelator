@@ -10,7 +10,7 @@ import {
   kmeansClustering,
   pixelate,
   binaryQuantization,
-} from "./js/clustering.js";
+} from "./js/pixelation.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -61,20 +61,19 @@ function addExtraControl(label, minVal, maxVal, value) {
 }
 
 methodSel.addEventListener("change", (ev) => {
-  const idx = parseInt(ev.target.value);
   if (extraSlider) {
     extraLabel.textContent = "";
     extraSlider.remove();
     extraValue.remove();
   }
-
-  switch (idx) {
+	const methodIndex = parseInt(ev.target.value);
+  switch (methodIndex) {
     case methodOptions.CLUSTER.value: {
-      addExtraControl("N° cluster", 2, 10, 2);
+      addExtraControl("N° cluster", 2, 10, 3);
       break;
     }
     case methodOptions.QUANT.value: {
-      addExtraControl("N° bits", 1, 7, 3);
+      addExtraControl("N° bits", 2, 7, 3);
       break;
     }
   }
@@ -89,25 +88,38 @@ uploadBtn.addEventListener("click", () => {
 });
 
 processBtn.addEventListener("click", () => {
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  resetPixelData(imageData.data);
-  // // grayScale(data);
-  const size = parseInt(imageParams.pixelSize);
-  pixelate(canvas, imageData.data, size);
+	if (imageParams.origPixelData.length === 0) {
+		alert("Suba una imagen primero!");
+		return;
+	}
+	canvas.classList.add("processing");
+	new Promise((resolve) => {
+		setTimeout(() => {
+			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-  switch (parseInt(methodSel.value)) {
-    case methodOptions.CLUSTER.value: {
-      const nClusters = parseInt(extraSlider.value);
-      kmeansClustering(canvas, imageData.data, size, nClusters);
-      break;
-    }
-    case methodOptions.QUANT.value: {
-      const nBits = parseInt(extraSlider.value);
-      binaryQuantization(canvas, imageData.data, nBits);
-      break;
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
+			resetPixelData(imageData.data);
+			// // grayScale(data);
+			const size = parseInt(imageParams.pixelSize);
+			pixelate(canvas, imageData.data, size);
+
+			switch (parseInt(methodSel.value)) {
+				case methodOptions.CLUSTER.value: {
+					const nClusters = parseInt(extraSlider.value);
+					kmeansClustering(canvas, imageData.data, size, nClusters);
+					break;
+				}
+				case methodOptions.QUANT.value: {
+					const nBits = parseInt(extraSlider.value);
+					binaryQuantization(canvas, imageData.data, nBits);
+					break;
+				}
+			}
+			ctx.putImageData(imageData, 0, 0);
+			resolve();
+		}, 100);
+	}).then(() => {
+		canvas.classList.remove("processing");
+	});
 });
 
 pixelSizeInput.addEventListener("change", (ev) => {
