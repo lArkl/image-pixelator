@@ -1,0 +1,30 @@
+{
+  "name": "image-pixelator",
+  "version": "1.0.0",
+  "description": "Upload your image and get its pixelized version",
+  "dependencies": {
+    "serve": "^13.0.2"
+  },
+  "devDependencies": {
+    "parcel": "^2.3.2",
+    "prettier": "2.6.0"
+  },
+  "source": "index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build",
+    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lArkl/image-pixelator.git"
+  },
+  "keywords": [],
+  "author": "lArkl",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lArkl/image-pixelator/issues"
+  },
+  "homepage": "https://github.com/lArkl/image-pixelator#readme"
+}
