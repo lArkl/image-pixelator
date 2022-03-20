@@ -15,7 +15,7 @@ export function pixelate(canvas, data, size) {
       const avg = [0, 0, 0];
       for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
-          const idx = (x + j) * canvas.width * 4 + (y + i) * 4;
+          const idx = ((y + j) * canvas.width + (x + i)) * 4;
           for (let c = 0; c < 3; c++) {
             avg[c] += data[idx + c];
           }
@@ -27,7 +27,7 @@ export function pixelate(canvas, data, size) {
       }
       for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
-          const idx = (x + j) * canvas.width * 4 + (y + i) * 4;
+          const idx = ((y + j) * canvas.width + (x + i)) * 4;
           for (let c = 0; c < 3; c++) {
             data[idx + c] = avg[c];
           }
@@ -41,7 +41,7 @@ export function binaryQuantization(canvas, data, lostBits = 3) {
   const binary = 2 ** 8 - 2 ** lostBits;
   for (let x = 0; x < canvas.width; ++x) {
     for (let y = 0; y < canvas.height; ++y) {
-      const idx = y * canvas.width * 4 + x * 4;
+      const idx = (y * canvas.width + x) * 4;
       for (let c = 0; c < 3; c++) {
         data[idx + c] = (data[idx + c] + Math.random() * 2 - 1) & binary;
       }
@@ -95,7 +95,7 @@ export function kmeansClustering(canvas, data, size, nCluster = 3) {
 export function quantize(canvas, data, size) {
   for (let x = 0; x < canvas.width; x += size) {
     for (let y = 0; y < canvas.height; x += size) {
-      const idx = y * canvas.width * 4 + x * 4;
+      const idx = (y * canvas.width + x ) * 4;
       const dx = Math.floor(x / size);
       const dy = Math.floor(y / size);
       for (let c = 0; c < 4; c++) {
