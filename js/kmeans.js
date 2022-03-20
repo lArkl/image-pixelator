@@ -1,54 +1,53 @@
-function randomCentroids(features, inf=-2, sup=2) {
-	return Array(features)
-		.fill(0)
-		.map(e => Math.random() * (sup - inf) + inf);
+function randomCentroids(features, inf = -2, sup = 2) {
+  return Array(features)
+    .fill(0)
+    .map((e) => Math.random() * (sup - inf) + inf);
 }
 
 function calcDistance(pointA, pointB) {
-	let distance = 0;
-	for(let i=0; i < pointA.length; ++i) {
-		distance += (pointA[i] - pointB[i]) ** 2
-	}
-	return distance;
+  let distance = 0;
+  for (let i = 0; i < pointA.length; ++i) {
+    distance += (pointA[i] - pointB[i]) ** 2;
+  }
+  return distance;
 }
 
 function getNearestCentroid(centroids, point) {
-	let minDist = 1e6;
-	let minCentroid = -1;
+  let minDist = 1e6;
+  let minCentroid = -1;
 
-	for(let c=0; c < centroids.length; ++c) {
-		const distance = calcDistance(point, centroids[c].coords);
-		if(distance < minDist) {
-			minDist = distance;
-			minCentroid = c;
-		}
-	}
-	return minCentroid;
+  for (let c = 0; c < centroids.length; ++c) {
+    const distance = calcDistance(point, centroids[c].coords);
+    if (distance < minDist) {
+      minDist = distance;
+      minCentroid = c;
+    }
+  }
+  return minCentroid;
 }
 
 function kmeanIteration(dataset, centroids, features) {
-	// const labels = [];
-	for(let c=0; c < centroids.length; ++c) {
-		centroids[c].accumPoints = Array(features).fill(0);
-		centroids[c].nPoints = 0;
-	}
+  for (let c = 0; c < centroids.length; ++c) {
+    centroids[c].accumPoints = Array(features).fill(0);
+    centroids[c].nPoints = 0;
+  }
 
-	for(let i=0; i < dataset.length; ++i) {
-		const point = dataset[i];
-		const minCentroid = getNearestCentroid(centroids, point);
-		const nearestCentroid = centroids[minCentroid];
-		// labels.push(minCentroid);
-		for(let j=0; j < features; ++j) {
-			nearestCentroid.accumPoints[j] += point[j];
-		}
-		nearestCentroid.nPoints++;
-	}
+  for (let i = 0; i < dataset.length; ++i) {
+    const point = dataset[i];
+    const minCentroid = getNearestCentroid(centroids, point);
+    const nearestCentroid = centroids[minCentroid];
+    for (let j = 0; j < features; ++j) {
+      nearestCentroid.accumPoints[j] += point[j];
+    }
+    nearestCentroid.nPoints++;
+  }
 
-	for(let c = 0; c < centroids.length; ++c) {
-		const nPoints = centroids[c].nPoints;
-		centroids[c].coords = centroids[c].accumPoints.map(e => e / (nPoints? nPoints : 1));
-	}
-	// return labels;
+  for (let c = 0; c < centroids.length; ++c) {
+    const nPoints = centroids[c].nPoints;
+    centroids[c].coords = centroids[c].accumPoints.map(
+      (e) => e / (nPoints ? nPoints : 1)
+    );
+  }
 }
 
 function calcMeanCentroid(dataset, start, end) {
@@ -85,74 +84,56 @@ function naiveShardingCentroidInit(dataset, k) {
   return centroids;
 }
 
-function initCentroids(dataset, nClusters, initType='naive') {
-	let centroidCoords = [];
-	if(initType === 'naive') {
-		centroidCoords = naiveShardingCentroidInit(dataset, nClusters);
-	} else {
-		for(let c=0; c < nClusters; ++c) {
-			centroidCoords.push(randomCentroids());
-		}
-	}
-	const centroids = centroidCoords.map(coords => ({
-		coords: coords,
-		nPoints: 0,
-	}));
-	return centroids;
+function initCentroids(dataset, nClusters, initType = "naive") {
+  let centroidCoords = [];
+  if (initType === "naive") {
+    centroidCoords = naiveShardingCentroidInit(dataset, nClusters);
+  } else {
+    for (let c = 0; c < nClusters; ++c) {
+      centroidCoords.push(randomCentroids());
+    }
+  }
+  const centroids = centroidCoords.map((coords) => ({
+    coords: coords,
+    nPoints: 0,
+  }));
+  return centroids;
 }
 
-function centroidHasChanged(prevC, currC, eps=1e-3) {
-	let diff = 0;
-	for(let i = 0; i < prevC.length; ++i) {
-		diff += (prevC[i] - currC[i]) ** 2;
-	}
-	return diff > eps;
+function centroidHasChanged(prevC, currC, eps = 1e-3) {
+  let diff = 0;
+  for (let i = 0; i < prevC.length; ++i) {
+    diff += (prevC[i] - currC[i]) ** 2;
+  }
+  return diff > eps;
 }
 
-function kmeans(dataset, nClusters=3, maxIter=100) {
-	const centroids = initCentroids(dataset, nClusters);
-	let iter = 0;
-	// let labels = [];
-	const features = dataset[0].length;
-	let noCentroidChanged = false
-	while (iter < maxIter && !noCentroidChanged) {
-		const prevCentroidsCoords = centroids.map(centroid => [...centroid.coords]);
-		kmeanIteration(dataset, centroids, features);
-		const currCentroidsCoords = centroids.map(centroid => centroid.coords);
-		noCentroidChanged = prevCentroidsCoords.every((prevCentroidCoord, idx) => !centroidHasChanged(prevCentroidCoord, currCentroidsCoords[idx]));
-		iter++;
-	}
-	const centroidCoords = centroids.map(e => e.coords.map(c => Math.floor(c)));
-	return {
-		labels: dataset.map(point => getNearestCentroid(centroids, point)),
-		centroids: centroidCoords,
-		iterations: iter,
-		converged: iter < maxIter
-	}
+function kmeans(dataset, nClusters = 3, maxIter = 100) {
+  const centroids = initCentroids(dataset, nClusters);
+  let iter = 0;
+  const features = dataset[0].length;
+  let noCentroidChanged = false;
+  while (iter < maxIter && !noCentroidChanged) {
+    const prevCentroidsCoords = centroids.map((centroid) => [
+      ...centroid.coords,
+    ]);
+    kmeanIteration(dataset, centroids, features);
+    const currCentroidsCoords = centroids.map((centroid) => centroid.coords);
+    noCentroidChanged = prevCentroidsCoords.every(
+      (prevCentroidCoord, idx) =>
+        !centroidHasChanged(prevCentroidCoord, currCentroidsCoords[idx])
+    );
+    iter++;
+  }
+  const centroidCoords = centroids.map((e) =>
+    e.coords.map((c) => Math.floor(c))
+  );
+  return {
+    labels: dataset.map((point) => getNearestCentroid(centroids, point)),
+    centroids: centroidCoords,
+    iterations: iter,
+    converged: iter < maxIter,
+  };
 }
 
 export default kmeans;
-
-
-
-
-
-// const data = [];
-// for(let i=0; i < 150000; ++i) {
-// 	const row = []
-// 	for(let j=0; j < 3; ++j) {
-// 		row.push(Math.floor(Math.random() * 255));
-// 	}
-// 	data.push(row);
-// }
-
-// function calcTime(callback, data, nClusters) {
-// 	const start = new Date();
-// 	const result = callback(data, nClusters);
-// 	console.log(result);
-// 	return new Date() - start;
-// }
-
-
-// console.log('own kmeans mseconds:', calcTime(kmeans, data, 3));
-
